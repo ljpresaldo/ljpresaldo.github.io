@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>leitseat — lei jo</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .search-bar {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.88rem;
+            border: 1px solid #ddd;
+            background: #fff;
+            color: #1a1a1a;
+            outline: none;
+            margin-bottom: 0.9rem;
+        }
+
+        .search-bar:focus {
+            border-color: #6B8E66;
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .filter-btn {
+            font-family: 'Courier New', monospace;
+            font-size: 0.82rem;
+            padding: 0.25rem 0.65rem;
+            border: 1px solid #ccc;
+            background: #fff;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .filter-btn:hover {
+            border-color: #6B8E66;
+            color: #6B8E66;
+        }
+
+        .filter-btn.active {
+            background: #6B8E66;
+            border-color: #6B8E66;
+            color: #fff;
+        }
+
+        .count {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-bottom: 0.9rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            text-align: left;
+            font-size: 0.78rem;
+            color: #aaa;
+            font-weight: normal;
+            padding: 0 0.6rem 0.6rem 0.6rem;
+            border-bottom: 1px solid #e8e8e8;
+            letter-spacing: 0.03em;
+            white-space: nowrap;
+        }
+
+        tbody tr.entry-row {
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.1s;
+        }
+
+        tbody tr.entry-row:hover {
+            background: #fafafa;
+        }
+
+        tbody tr.entry-row td {
+            padding: 0.65rem 0.6rem;
+            font-size: 0.88rem;
+            vertical-align: middle;
+        }
+
+        tbody tr.entry-row td.place-cell {
+            color: #555;
+            white-space: nowrap;
+        }
+
+        tbody tr.entry-row td.date-cell {
+            color: #aaa;
+            font-size: 0.82rem;
+            white-space: nowrap;
+        }
+
+        .stars {
+            color: #6B8E66;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            font-size: 0.82rem;
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            color: #888;
+            border: 1px solid #e0e0e0;
+            padding: 0.1rem 0.4rem;
+        }
+
+        /* expand row */
+        tr.expand-row td {
+            padding: 0;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .expand-inner {
+            padding: 0.8rem 0.6rem 1rem 0.6rem;
+            font-size: 0.85rem;
+            color: #555;
+            background: #fafafa;
+            display: none;
+        }
+
+        .chevron {
+            font-size: 0.7rem;
+            color: #bbb;
+            margin-left: 0.3rem;
+            transition: transform 0.15s;
+            display: inline-block;
+        }
+
+        tr.entry-row.open .chevron {
+            transform: rotate(90deg);
+        }
+
+        .show-more-row td {
+            padding-top: 1rem;
+            font-size: 0.82rem;
+            color: #aaa;
+            text-align: center;
+        }
+
+        .show-more-btn {
+            background: none;
+            border: 1px solid #ddd;
+            font-family: 'Courier New', monospace;
+            font-size: 0.82rem;
+            color: #888;
+            padding: 0.3rem 1rem;
+            cursor: pointer;
+        }
+
+        .show-more-btn:hover {
+            border-color: #6B8E66;
+            color: #6B8E66;
+        }
+
+        .expand-title {
+            font-weight: bold;
+            font-size: 0.92rem;
+            color: #1a1a1a;
+            margin-bottom: 0.55rem;
+        }
+
+        /* photo carousel */
+        .expand-content {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .expand-notes {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .expand-notes p {
+            font-size: 0.85rem;
+            color: #555;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .carousel {
+            flex-shrink: 0;
+            width: 220px;
+        }
+
+        .carousel-img-wrap {
+            width: 220px;
+            height: 165px;
+            background: #f0f0f0;
+            border: 1px solid #e8e8e8;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .carousel-no-img {
+            font-size: 0.78rem;
+            color: #ccc;
+            font-family: 'Courier New', monospace;
+        }
+
+        .carousel-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 0.4rem;
+        }
+
+        .carousel-btn {
+            background: none;
+            border: 1px solid #e0e0e0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: #888;
+            padding: 0.15rem 0.5rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .carousel-btn:hover:not(:disabled) {
+            border-color: #6B8E66;
+            color: #6B8E66;
+        }
+
+        .carousel-btn:disabled {
+            opacity: 0.3;
+            cursor: default;
+        }
+
+        .carousel-count {
+            font-size: 0.75rem;
+            color: #bbb;
+            font-family: 'Courier New', monospace;
+        }
+
+        .empty {
+            text-align: center;
+            color: #bbb;
+            font-size: 0.85rem;
+            padding: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="back"><a href="index.html">← home</a></div>
+
+    <div class="page-title">
+        <h1>leitseat ✦</h1>
+        <p>food stuff! documenting food and friends</p>
+    </div>
+
+    <hr class="divider">
+
+    <input class="search-bar" type="text" placeholder="search food log..." id="searchInput">
+
+    <div class="filter-row" id="filterRow">
+        <button class="filter-btn active" data-tag="all">all</button>
+        <button class="filter-btn" data-tag="favorites">★ favorites</button>
+        <button class="filter-btn" data-tag="matcha">matcha</button>
+        <button class="filter-btn" data-tag="maginhawa">maginhawa</button>
+        <button class="filter-btn" data-tag="2026">2026</button>
+        <button class="filter-btn" data-tag="2025">2025</button>
+        <button class="filter-btn" data-tag="2024">2024</button>
+    </div>
+
+    <div class="count" id="countLabel"></div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width:38%">place</th>
+                <th style="width:12%">stars</th>
+                <th style="width:14%">date</th>
+                <th>tags</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+
+    <script src="leitseat-data.js"></script>
+    <script>
+        const PAGE_SIZE = 10;
+        let activeTag = 'all';
+        let searchQuery = '';
+        let showing = PAGE_SIZE;
+
+        function starsHtml(n) {
+            return '<span class="stars">' + '✦'.repeat(n) + '<span style="color:#e0e0e0">' + '✦'.repeat(5 - n) + '</span></span>';
+        }
+
+        function formatDate(d) {
+            const [y, m, day] = d.split('-');
+            const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+            return `${months[parseInt(m)-1]} ${parseInt(day)}, ${y}`;
+        }
+
+        function filtered() {
+            return leitseatData.filter(entry => {
+                const tagMatch = activeTag === 'all' || entry.tags.map(t => t.toLowerCase()).includes(activeTag);
+                const q = searchQuery.toLowerCase();
+                const textMatch = !q ||
+                    entry.title.toLowerCase().includes(q) ||
+                    entry.place.toLowerCase().includes(q) ||
+                    entry.tags.some(t => t.toLowerCase().includes(q));
+                return tagMatch && textMatch;
+            });
+        }
+
+        function render() {
+            const data = filtered();
+            const visible = data.slice(0, showing);
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            document.getElementById('countLabel').textContent =
+                `${data.length} entr${data.length === 1 ? 'y' : 'ies'}`;
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="empty">nothing here yet.</td></tr>`;
+                return;
+            }
+
+            visible.forEach((entry, i) => {
+                const rowId = `expand-${i}`;
+
+                const tr = document.createElement('tr');
+                tr.className = 'entry-row';
+                tr.innerHTML = `
+                    <td class="place-cell">${entry.place} <span class="chevron">▶</span></td>
+                    <td>${starsHtml(entry.stars)}</td>
+                    <td class="date-cell">${formatDate(entry.date)}</td>
+                    <td><div class="tag-list">${entry.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div></td>
+                `;
+
+                // build carousel html
+                const imgs = entry.images || [];
+                let carouselHtml = '';
+                if (imgs.length > 0) {
+                    carouselHtml = `
+                        <div class="carousel" data-imgs='${JSON.stringify(imgs)}' data-idx="0">
+                            <div class="carousel-img-wrap">
+                                <img src="images/leitseat/${imgs[0]}" alt="${entry.title}">
+                            </div>
+                            ${imgs.length > 1 ? `
+                            <div class="carousel-controls">
+                                <button class="carousel-btn carousel-prev" disabled>←</button>
+                                <span class="carousel-count">1 / ${imgs.length}</span>
+                                <button class="carousel-btn carousel-next">→</button>
+                            </div>` : ''}
+                        </div>`;
+                }
+
+                const expandTr = document.createElement('tr');
+                expandTr.className = 'expand-row';
+                expandTr.id = rowId;
+                expandTr.innerHTML = `
+                    <td colspan="4">
+                        <div class="expand-inner">
+                            <div class="expand-title">${entry.title}</div>
+                            <div class="expand-content">
+                                <div class="expand-notes"><p>${entry.notes || '<em>no notes yet.</em>'}</p></div>
+                                ${carouselHtml}
+                            </div>
+                        </div>
+                    </td>`;
+
+                tr.addEventListener('click', () => {
+                    const isOpen = tr.classList.contains('open');
+                    // close all
+                    document.querySelectorAll('tr.entry-row.open').forEach(r => r.classList.remove('open'));
+                    document.querySelectorAll('tr.expand-row.open').forEach(r => {
+                        r.classList.remove('open');
+                        r.querySelector('.expand-inner').style.display = 'none';
+                    });
+                    if (!isOpen) {
+                        tr.classList.add('open');
+                        expandTr.classList.add('open');
+                        expandTr.querySelector('.expand-inner').style.display = 'block';
+                    }
+                });
+
+                // carousel prev/next
+                expandTr.addEventListener('click', e => {
+                    e.stopPropagation();
+                    const carousel = e.target.closest('.carousel');
+                    if (!carousel) return;
+                    const isPrev = e.target.classList.contains('carousel-prev');
+                    const isNext = e.target.classList.contains('carousel-next');
+                    if (!isPrev && !isNext) return;
+
+                    const imgs = JSON.parse(carousel.dataset.imgs);
+                    let idx = parseInt(carousel.dataset.idx);
+                    idx = isPrev ? idx - 1 : idx + 1;
+                    idx = Math.max(0, Math.min(imgs.length - 1, idx));
+                    carousel.dataset.idx = idx;
+
+                    carousel.querySelector('img').src = `images/leitseat/${imgs[idx]}`;
+                    carousel.querySelector('.carousel-count').textContent = `${idx + 1} / ${imgs.length}`;
+                    carousel.querySelector('.carousel-prev').disabled = idx === 0;
+                    carousel.querySelector('.carousel-next').disabled = idx === imgs.length - 1;
+                });
+
+                tbody.appendChild(tr);
+                tbody.appendChild(expandTr);
+            });
+
+            if (data.length > showing) {
+                const moreTr = document.createElement('tr');
+                moreTr.className = 'show-more-row';
+                moreTr.innerHTML = `<td colspan="4"><button class="show-more-btn" id="showMoreBtn">show more (${data.length - showing} remaining)</button></td>`;
+                tbody.appendChild(moreTr);
+                document.getElementById('showMoreBtn').addEventListener('click', () => {
+                    showing += PAGE_SIZE;
+                    render();
+                });
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('input', e => {
+            searchQuery = e.target.value;
+            showing = PAGE_SIZE;
+            render();
+        });
+
+        document.getElementById('filterRow').addEventListener('click', e => {
+            const btn = e.target.closest('.filter-btn');
+            if (!btn) return;
+            activeTag = btn.dataset.tag;
+            showing = PAGE_SIZE;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            render();
+        });
+
+        render();
+    </script>
+</body>
+</html>

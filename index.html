@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lei jo</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .header {
+            margin-bottom: 2rem;
+        }
+
+        .greeting {
+            color: #6B8E66;
+            font-size: 0.82rem;
+            margin-bottom: 0.6rem;
+            letter-spacing: 0.02em;
+        }
+
+        .tagline {
+            color: #888;
+            font-size: 0.88rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .currently {
+            color: #aaa;
+            font-size: 0.85rem;
+            margin-bottom: 0;
+            min-height: 1.2em;
+        }
+
+        .currently .word {
+            color: #6B8E66;
+        }
+
+        .nav-list {
+            list-style: none;
+            margin: 2rem 0 0 0;
+        }
+
+        .nav-list li {
+            margin-bottom: 0.55rem;
+            font-size: 0.92rem;
+            display: flex;
+            align-items: baseline;
+            gap: 1.5rem;
+        }
+
+        .nav-list li:before {
+            content: none;
+        }
+
+        .nav-list .num {
+            color: #ddd;
+            font-size: 0.78rem;
+            width: 1.2rem;
+            flex-shrink: 0;
+            text-align: right;
+        }
+
+        .nav-list .link-label {
+            flex-shrink: 0;
+            width: 175px;
+            font-weight: bold;
+            position: relative;
+        }
+
+        /* sparkle on hover */
+        .nav-list .link-label::after {
+            content: " ✦";
+            opacity: 0;
+            color: #6B8E66;
+            transition: opacity 0.2s;
+        }
+        .nav-list .link-label:hover::after {
+            opacity: 1;
+        }
+
+        .nav-list .link-desc {
+            color: #999;
+            font-size: 0.88rem;
+            white-space: nowrap;
+        }
+
+        .footer {
+            margin-top: 3rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid #f0f0f0;
+            font-size: 0.78rem;
+            color: #ccc;
+        }
+
+        .hint {
+            color: #ddd;
+            font-size: 0.74rem;
+            margin-top: 1.5rem;
+        }
+        .hint kbd {
+            font-family: 'Courier New', monospace;
+            border: 1px solid #e0e0e0;
+            border-radius: 2px;
+            padding: 0 0.25rem;
+            color: #bbb;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <p class="greeting" id="greeting"></p>
+        <h1>live laugh love lei jo ✦</h1>
+        <p class="tagline">my little tiny corner of the internet!</p>
+        <p class="currently" id="currently"></p>
+    </div>
+
+    <hr class="divider">
+
+    <ul class="nav-list">
+        <li>
+            <span class="num">1</span>
+            <a href="leitseat.html" class="link-label">→ leitseat</a>
+            <span class="link-desc">food stuff! documenting food and friends</span>
+        </li>
+        <li>
+            <span class="num">2</span>
+            <a href="reading.html" class="link-label">→ reading list</a>
+            <span class="link-desc">books i am reading, loved, want to read</span>
+        </li>
+        <li>
+            <span class="num">3</span>
+            <a href="spaceout.html" class="link-label">→ space out</a>
+            <span class="link-desc">me when i space out</span>
+        </li>
+        <li>
+            <span class="num">4</span>
+            <a href="starboard.html" class="link-label">→ star board</a>
+            <span class="link-desc">life in numbers</span>
+        </li>
+        <li>
+            <span class="num">5</span>
+            <a href="bucketlist.html" class="link-label">→ 2026 bucketlist</a>
+            <span class="link-desc">things i want to do before the year ends</span>
+        </li>
+        <li>
+            <span class="num">6</span>
+            <a href="desiderata.html" class="link-label">→ desiderata</a>
+            <span class="link-desc">my favourite poem</span>
+        </li>
+        <li>
+            <span class="num">7</span>
+            <a href="me.html" class="link-label">→ me</a>
+            <span class="link-desc">all time favorites</span>
+        </li>
+    </ul>
+
+    <p class="hint">psst — press <kbd>1</kbd>–<kbd>7</kbd> to jump to a page</p>
+
+    <div class="footer">
+        <span>last updated: may 29, 2026</span>
+    </div>
+
+    <script>
+        // ── time-based greeting ──
+        function update() {
+            const h = parseInt(new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila', hour: 'numeric', hour12: false }));
+            let greet;
+            if (h < 5) greet = 'still up?';
+            else if (h < 12) greet = 'good morning';
+            else if (h < 18) greet = 'good afternoon';
+            else greet = 'good evening';
+            document.getElementById('greeting').textContent = greet + ' ✦';
+        }
+        update();
+
+        // ── rotating "currently" line ──
+        const states = [
+            'thinking about bacteria',
+            'looking for soft sunlight',
+            'pretending to befriend my cats',
+            'overcomplicating something simple',
+            'on a walk, probably',
+            'spacing out',
+            'making a tiny project',
+            'craving matcha',
+            'listening to a true crime podcast'
+        ];
+        const cur = document.getElementById('currently');
+        let idx = Math.floor(Math.random() * states.length);
+
+        function typeState() {
+            const word = states[idx];
+            cur.innerHTML = 'currently: <span class="word"></span>';
+            const span = cur.querySelector('.word');
+            let i = 0;
+            const typer = setInterval(() => {
+                span.textContent = word.slice(0, i);
+                i++;
+                if (i > word.length) {
+                    clearInterval(typer);
+                    setTimeout(() => {
+                        idx = (idx + 1) % states.length;
+                        typeState();
+                    }, 3500);
+                }
+            }, 55);
+        }
+        typeState();
+
+        // ── keyboard navigation ──
+        const pages = ['leitseat.html', 'reading.html', 'spaceout.html', 'starboard.html', 'bucketlist.html', 'desiderata.html', 'me.html'];
+        document.addEventListener('keydown', e => {
+            const n = parseInt(e.key);
+            if (n >= 1 && n <= pages.length) {
+                window.location.href = pages[n - 1];
+            }
+        });
+    </script>
+</body>
+</html>

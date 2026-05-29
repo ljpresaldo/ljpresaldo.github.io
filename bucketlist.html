@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 bucketlist — lei jo</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .subtitle { color: #888; font-size: 0.88rem; }
+
+        .progress-line {
+            font-size: 0.8rem;
+            color: #bbb;
+            margin-top: 0.5rem;
+        }
+
+        .progress-bar-wrap {
+            width: 200px;
+            height: 3px;
+            background: #f0f0f0;
+            margin-top: 0.5rem;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: #6B8E66;
+            transition: width 0.4s;
+        }
+
+        .list {
+            list-style: none;
+            margin-top: 2rem;
+        }
+
+        .list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.9rem;
+            padding: 0.7rem 0;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 0.92rem;
+            color: #333;
+        }
+
+        .list li:before { content: none; }
+
+        .list li:last-child { border-bottom: none; }
+
+        .bullet {
+            flex-shrink: 0;
+            width: 1rem;
+            margin-top: 0.1rem;
+            font-size: 0.7rem;
+            color: #ccc;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .bullet.done {
+            color: #6B8E66;
+            font-size: 0.85rem;
+        }
+
+        .item-text { flex: 1; line-height: 1.6; }
+
+        li.done-item .item-text {
+            color: #bbb;
+            text-decoration: line-through;
+            text-decoration-color: #ccc;
+        }
+
+        .item-note {
+            font-size: 0.78rem;
+            color: #bbb;
+            margin-top: 0.15rem;
+        }
+
+        .deco {
+            color: #6B8E66;
+            opacity: 0.15;
+            font-size: 0.75rem;
+            letter-spacing: 4px;
+            margin: 2rem 0 0.5rem 0;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="back"><a href="index.html">← home</a></div>
+
+    <div class="page-title">
+        <h1>2026 bucketlist ✦</h1>
+        <p class="subtitle">things i want to do before the year ends</p>
+        <p class="progress-line" id="progressText"></p>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar"></div></div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="deco">✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦</div>
+
+    <ul class="list" id="bucketList"></ul>
+
+    <script>
+        const items = [
+            {
+                text: "build something (vague on purpose)",
+                done: false
+            },
+            {
+                text: "go on a trip outside metro manila with friends",
+                done: false
+            },
+            {
+                text: "ride a bus and get off at a random stop",
+                done: false
+            },
+            {
+                text: "smoke a cigarette. just once.",
+                done: false
+            },
+            {
+                text: "write something i will be insanely proud of",
+                done: false
+            },
+            {
+                text: "finally do jess and pat's open mic thing",
+                note: "suggested by reign",
+                done: false
+            },
+            {
+                text: "make 5 paintings before the year ends",
+                note: "0 / 5",
+                done: false
+            },
+            {
+                text: "aquarium date with friends!",
+                done: false
+            },
+            {
+                text: "go out to just draw",
+                done: false
+            },
+            {
+                text: "decorate my balcony",
+                done: false
+            },
+            {
+                text: "write a letter to a scientist i admire",
+                done: false
+            },
+            {
+                text: "write that one biology essay topic i keep thinking about",
+                done: false
+            },
+        ];
+
+        const list = document.getElementById('bucketList');
+        const done = items.filter(i => i.done).length;
+        const total = items.length;
+
+        document.getElementById('progressText').textContent = `${done} of ${total} done`;
+        document.getElementById('progressBar').style.width = `${(done / total) * 100}%`;
+
+        items.forEach(item => {
+            const li = document.createElement('li');
+            if (item.done) li.classList.add('done-item');
+
+            li.innerHTML = `
+                <span class="bullet ${item.done ? 'done' : ''}">
+                    ${item.done ? '✦' : '·'}
+                </span>
+                <div class="item-text">
+                    ${item.text}
+                    ${item.note ? `<div class="item-note">${item.note}</div>` : ''}
+                </div>
+            `;
+            list.appendChild(li);
+        });
+    </script>
+</body>
+</html>
