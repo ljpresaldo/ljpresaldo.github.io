@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026 bucketlist — lei jo</title>
+    <title>2026 bucketlist | lei jo</title>
     <link rel="stylesheet" href="style.css">
     <style>
         .subtitle { color: #888; font-size: 0.88rem; }
@@ -88,7 +88,6 @@
     </style>
 </head>
 <body>
-    <div class="back"><a href="index.html">← home</a></div>
 
     <div class="page-title">
         <h1>2026 bucketlist ✦</h1>
@@ -103,8 +102,13 @@
 
     <ul class="list" id="bucketList"></ul>
 
+    <script src="sidebar.js"></script>
     <script>
         const items = [
+            {
+                text: "get another tattoo",
+                done: true
+            },
             {
                 text: "build something (vague on purpose)",
                 done: false
@@ -119,7 +123,7 @@
             },
             {
                 text: "smoke a cigarette. just once.",
-                done: false
+                done: true
             },
             {
                 text: "write something i will be insanely proud of",
@@ -132,7 +136,7 @@
             },
             {
                 text: "make 5 paintings before the year ends",
-                note: "0 / 5",
+                note: "3 / 5",
                 done: false
             },
             {
@@ -148,12 +152,8 @@
                 done: false
             },
             {
-                text: "write a letter to a scientist i admire",
-                done: false
-            },
-            {
-                text: "write that one biology essay topic i keep thinking about",
-                done: false
+                text: "get my first disposable film camera",
+                done: true
             },
         ];
 
@@ -170,7 +170,7 @@
 
             li.innerHTML = `
                 <span class="bullet ${item.done ? 'done' : ''}">
-                    ${item.done ? '✦' : '·'}
+                    ${item.done ? '✦' : '✧'}
                 </span>
                 <div class="item-text">
                     ${item.text}

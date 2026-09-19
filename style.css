@@ -9,10 +9,133 @@ body {
     color: #1a1a1a;
     font-family: 'Courier New', monospace;
     line-height: 1.5;
-    padding: 3.5rem 5rem;
-    max-width: 860px;
-    margin: 0 auto;
     font-size: 0.92rem;
+    display: flex;
+    min-height: 100vh;
+    max-width: 1060px;
+    margin: 0 0 0 2.5rem;
+}
+
+/* ── sidebar ── */
+.site-sidebar {
+    width: 225px;
+    flex-shrink: 0;
+    padding: 3rem 2.5rem 2rem 0;
+    border-right: 1px solid #e8e8e8;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.sidebar-logo-link {
+    display: block;
+    border: none;
+    margin-bottom: 1.2rem;
+}
+
+.sidebar-rule {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 0 0 1.8rem 0;
+}
+
+.sidebar-updated {
+    position: absolute;
+    bottom: 2rem;
+    left: 0;
+    right: 0;
+    padding: 0 2.5rem 0 0;
+    font-size: 0.7rem;
+    color: #ccc;
+    margin: 0;
+    font-family: 'Courier New', monospace;
+}
+
+.sidebar-logo {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.sidebar-logo-text {
+    font-size: 1rem;
+    color: #1a1a1a;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+}
+
+.site-sidebar-nav {
+    display: flex;
+    flex-direction: column;
+}
+
+.snav-item {
+    padding: 1rem 0;
+}
+
+.snav-item-divider {
+    border-bottom: 1px solid #ececec;
+}
+
+.snav-desc {
+    font-size: 0.7rem;
+    color: #bbb;
+    margin: 0.3rem 0 0 0;
+    font-family: 'Courier New', monospace;
+    line-height: 1.4;
+}
+
+.snav-link {
+    display: block;
+    border: none;
+    text-decoration: none;
+    line-height: 1;
+}
+
+.snav-img {
+    width: 60%;
+    height: auto;
+    display: block;
+    opacity: 0.45;
+    transition: opacity 0.15s;
+    filter: grayscale(100%);
+}
+
+.sidebar-star {
+    position: absolute;
+    width: 22px;
+    height: auto;
+    opacity: 0.65;
+    pointer-events: none;
+    user-select: none;
+}
+
+.snav-link:hover .snav-img,
+.snav-link.active .snav-img {
+    opacity: 1;
+    filter: none;
+}
+
+.snav-fallback {
+    font-size: 0.82rem;
+    color: #aaa;
+    transition: color 0.15s;
+}
+
+.snav-link:hover .snav-fallback,
+.snav-link.active .snav-fallback {
+    color: #6B8E66;
+}
+
+/* ── main content area ── */
+.main-content {
+    flex: 1;
+    padding: 3.5rem 2.5rem 3.5rem 2.5rem;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 a {

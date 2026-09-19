@@ -43,7 +43,7 @@ const readingData = [
     year: 2025,
     status: "read",
     tags: ["favorites", "sci-fi", "2025"],
-    notes: "i was not prepared. the form is perfect — you watch his writing change and it breaks you slowly."
+    notes: "i was not prepared. the form is perfect. you watch his writing change and it breaks you slowly."
   },
   {
     title: "The God of Small Things",

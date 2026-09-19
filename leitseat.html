@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>leitseat — lei jo</title>
+    <title>leitseat | lei jo</title>
     <link rel="stylesheet" href="style.css">
     <style>
         .search-bar {
@@ -263,10 +263,18 @@
             font-size: 0.85rem;
             padding: 2rem 0;
         }
+
+        .wip-banner {
+            font-size: 0.8rem;
+            color: #bbb;
+            border: 1px dashed #e0e0e0;
+            padding: 0.5rem 0.8rem;
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
-    <div class="back"><a href="index.html">← home</a></div>
 
     <div class="page-title">
         <h1>leitseat ✦</h1>
@@ -275,188 +283,8 @@
 
     <hr class="divider">
 
-    <input class="search-bar" type="text" placeholder="search food log..." id="searchInput">
+    <p class="wip-banner">work in progress.</p>
 
-    <div class="filter-row" id="filterRow">
-        <button class="filter-btn active" data-tag="all">all</button>
-        <button class="filter-btn" data-tag="favorites">★ favorites</button>
-        <button class="filter-btn" data-tag="matcha">matcha</button>
-        <button class="filter-btn" data-tag="maginhawa">maginhawa</button>
-        <button class="filter-btn" data-tag="2026">2026</button>
-        <button class="filter-btn" data-tag="2025">2025</button>
-        <button class="filter-btn" data-tag="2024">2024</button>
-    </div>
-
-    <div class="count" id="countLabel"></div>
-
-    <table>
-        <thead>
-            <tr>
-                <th style="width:38%">place</th>
-                <th style="width:12%">stars</th>
-                <th style="width:14%">date</th>
-                <th>tags</th>
-            </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-    </table>
-
-    <script src="leitseat-data.js"></script>
-    <script>
-        const PAGE_SIZE = 10;
-        let activeTag = 'all';
-        let searchQuery = '';
-        let showing = PAGE_SIZE;
-
-        function starsHtml(n) {
-            return '<span class="stars">' + '✦'.repeat(n) + '<span style="color:#e0e0e0">' + '✦'.repeat(5 - n) + '</span></span>';
-        }
-
-        function formatDate(d) {
-            const [y, m, day] = d.split('-');
-            const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
-            return `${months[parseInt(m)-1]} ${parseInt(day)}, ${y}`;
-        }
-
-        function filtered() {
-            return leitseatData.filter(entry => {
-                const tagMatch = activeTag === 'all' || entry.tags.map(t => t.toLowerCase()).includes(activeTag);
-                const q = searchQuery.toLowerCase();
-                const textMatch = !q ||
-                    entry.title.toLowerCase().includes(q) ||
-                    entry.place.toLowerCase().includes(q) ||
-                    entry.tags.some(t => t.toLowerCase().includes(q));
-                return tagMatch && textMatch;
-            });
-        }
-
-        function render() {
-            const data = filtered();
-            const visible = data.slice(0, showing);
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
-
-            document.getElementById('countLabel').textContent =
-                `${data.length} entr${data.length === 1 ? 'y' : 'ies'}`;
-
-            if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="empty">nothing here yet.</td></tr>`;
-                return;
-            }
-
-            visible.forEach((entry, i) => {
-                const rowId = `expand-${i}`;
-
-                const tr = document.createElement('tr');
-                tr.className = 'entry-row';
-                tr.innerHTML = `
-                    <td class="place-cell">${entry.place} <span class="chevron">▶</span></td>
-                    <td>${starsHtml(entry.stars)}</td>
-                    <td class="date-cell">${formatDate(entry.date)}</td>
-                    <td><div class="tag-list">${entry.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div></td>
-                `;
-
-                // build carousel html
-                const imgs = entry.images || [];
-                let carouselHtml = '';
-                if (imgs.length > 0) {
-                    carouselHtml = `
-                        <div class="carousel" data-imgs='${JSON.stringify(imgs)}' data-idx="0">
-                            <div class="carousel-img-wrap">
-                                <img src="images/leitseat/${imgs[0]}" alt="${entry.title}">
-                            </div>
-                            ${imgs.length > 1 ? `
-                            <div class="carousel-controls">
-                                <button class="carousel-btn carousel-prev" disabled>←</button>
-                                <span class="carousel-count">1 / ${imgs.length}</span>
-                                <button class="carousel-btn carousel-next">→</button>
-                            </div>` : ''}
-                        </div>`;
-                }
-
-                const expandTr = document.createElement('tr');
-                expandTr.className = 'expand-row';
-                expandTr.id = rowId;
-                expandTr.innerHTML = `
-                    <td colspan="4">
-                        <div class="expand-inner">
-                            <div class="expand-title">${entry.title}</div>
-                            <div class="expand-content">
-                                <div class="expand-notes"><p>${entry.notes || '<em>no notes yet.</em>'}</p></div>
-                                ${carouselHtml}
-                            </div>
-                        </div>
-                    </td>`;
-
-                tr.addEventListener('click', () => {
-                    const isOpen = tr.classList.contains('open');
-                    // close all
-                    document.querySelectorAll('tr.entry-row.open').forEach(r => r.classList.remove('open'));
-                    document.querySelectorAll('tr.expand-row.open').forEach(r => {
-                        r.classList.remove('open');
-                        r.querySelector('.expand-inner').style.display = 'none';
-                    });
-                    if (!isOpen) {
-                        tr.classList.add('open');
-                        expandTr.classList.add('open');
-                        expandTr.querySelector('.expand-inner').style.display = 'block';
-                    }
-                });
-
-                // carousel prev/next
-                expandTr.addEventListener('click', e => {
-                    e.stopPropagation();
-                    const carousel = e.target.closest('.carousel');
-                    if (!carousel) return;
-                    const isPrev = e.target.classList.contains('carousel-prev');
-                    const isNext = e.target.classList.contains('carousel-next');
-                    if (!isPrev && !isNext) return;
-
-                    const imgs = JSON.parse(carousel.dataset.imgs);
-                    let idx = parseInt(carousel.dataset.idx);
-                    idx = isPrev ? idx - 1 : idx + 1;
-                    idx = Math.max(0, Math.min(imgs.length - 1, idx));
-                    carousel.dataset.idx = idx;
-
-                    carousel.querySelector('img').src = `images/leitseat/${imgs[idx]}`;
-                    carousel.querySelector('.carousel-count').textContent = `${idx + 1} / ${imgs.length}`;
-                    carousel.querySelector('.carousel-prev').disabled = idx === 0;
-                    carousel.querySelector('.carousel-next').disabled = idx === imgs.length - 1;
-                });
-
-                tbody.appendChild(tr);
-                tbody.appendChild(expandTr);
-            });
-
-            if (data.length > showing) {
-                const moreTr = document.createElement('tr');
-                moreTr.className = 'show-more-row';
-                moreTr.innerHTML = `<td colspan="4"><button class="show-more-btn" id="showMoreBtn">show more (${data.length - showing} remaining)</button></td>`;
-                tbody.appendChild(moreTr);
-                document.getElementById('showMoreBtn').addEventListener('click', () => {
-                    showing += PAGE_SIZE;
-                    render();
-                });
-            }
-        }
-
-        document.getElementById('searchInput').addEventListener('input', e => {
-            searchQuery = e.target.value;
-            showing = PAGE_SIZE;
-            render();
-        });
-
-        document.getElementById('filterRow').addEventListener('click', e => {
-            const btn = e.target.closest('.filter-btn');
-            if (!btn) return;
-            activeTag = btn.dataset.tag;
-            showing = PAGE_SIZE;
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            render();
-        });
-
-        render();
-    </script>
+    <script src="sidebar.js"></script>
 </body>
 </html>
